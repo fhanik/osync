@@ -1,8 +1,6 @@
 SHORT FUTURE IMPROVEMENTS (post v1.0)
 -------------------------------------
 
-- Sync and delete propagation function merge (master and slave functions are the same, reduces code size and maintain effort)
-- Tree function merge (current and after tree functions are the same except for output filename and logging, reduces code size and maintain effort)
 - Tree functions execute piped commands (grep, awk) on master when launched on remote slave which can cause more bandwith usage
 - Fast sync mode should also work with remote systems
 
@@ -11,6 +9,9 @@ FAR FUTURE IMPROVEMENTS
 
 - Rethink of .osync_workdir/state/* files with PIDs, Host and Task Names to better identify multiple instances on the same fileset
 - Improve Master / Slave schema to Multimaster schema
+- Sync and delete propagation function merge (master and slave functions are the same, reduces code size and maintain effort)
+- Tree function merge (current and after tree functions are the same except for output filename and logging, reduces code size and maintain effort)
+- Master replica may also exist on remote host
 
 KNOWN ISSUES
 ------------
@@ -20,6 +21,7 @@ KNOWN ISSUES
 RECENT CHANGES
 --------------
 
+- Merged tree functions (Makes easier code, but marks first milestone in order to improve a lot of functionnality for v1.00)
 - Added possibility to quick sync two local directories without any prior configuration
 - Added time control on OS detection
 - 02 Nov. 2013: Osync 0.99 RC2
