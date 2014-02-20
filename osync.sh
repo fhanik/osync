@@ -21,12 +21,12 @@ else
 fi
 
 ## Default directory where to store temporary run files
-if [ -w /dev/shm ]
-then
-	RUN_DIR=/dev/shm
-elif [ -w /tmp ]
+if [ -w /tmp ]
 then
 	RUN_DIR=/tmp
+elif [ -w /dev/shm ]
+then
+	RUN_DIR=/dev/shm
 elif [ -w /var/tmp ]
 then
 	RUN_DIR=/var/tmp
@@ -296,9 +296,19 @@ function GetOperatingSystem
 	then
         	CheckConnectivity3rdPartyHosts
         	CheckConnectivityRemoteHost
-		eval "$SSH_CMD \"uname -spio\" > $RUN_DIR/osync_remote_os_$SCRIPT_PID 2>&1"
-		child_pid=$!
-        	WaitForTaskCompletion $child_pid 120 240
+		echo "FILIP: Checking uname: $SSH_CMD \"/usr/bin/uname\" > $RUN_DIR/osync_remote_os_$SCRIPT_PID 2>&1"
+                $SSH_CMD \"/usr/bin/uname\" > $RUN_DIR/osync_remote_os_$SCRIPT_PID 2>&1
+                #eval "$SSH_CMD \"uname -sp\" > $RUN_DIR/osync_remote_os_$SCRIPT_PID 2>&1"
+		#child_pid=$!
+                child_pid=
+                echo "FILIP PID:$child_pid"
+        	if [ "" != "$child_pid" ]
+                then
+                        ps -p $child_pid
+                        WaitForTaskCompletion $child_pid 120 240
+                fi
+                
+                echo "FILIP: Uname check: `cat $RUN_DIR/osync_remote_os_$SCRIPT_PID`"
         	retval=$?
 		if [ $retval != 0 ]
                 then
@@ -371,7 +381,9 @@ function WaitForTaskCompletion
                                 LogError "Max soft execution time exceeded for task."
                                 soft_alert=1
                         fi
-                        if [ $EXEC_TIME -gt $3 ] && [ $3 != 0 ]
+                        TIMEOUT=480
+                        
+                        if [ $EXEC_TIME -gt $TIMEOUT ] && [ $TIMEOUT != 0 ]
                         then
                                 LogError "Max hard execution time exceeded for task. Stopping task execution."
 				kill -s SIGTERM $1
